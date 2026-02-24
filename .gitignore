@@ -65,5 +65,12 @@ node_modules/
 # dotenv environment variables file
 .env
 
+# Firebase Admin SDK credentials (NUNCA COMMITAR!)
+serviceAccountKey.json
+*-firebase-adminsdk-*.json
+
+# Backups do banco de dados
+backup*.json
+
 # dataconnect generated files
 .dataconnect

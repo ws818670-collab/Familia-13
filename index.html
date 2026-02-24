@@ -5,26 +5,32 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Família 13">
+  <meta name="apple-mobile-web-app-title" content="Gestão de Clubes">
   <meta name="theme-color" content="#003366">
-  <title>Família 13 - Gestão de Time</title>
-  <link rel="stylesheet" href="style.css">
+  
+  <!-- Cache Control - Forçar atualização -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  
+  <title>Gestão de Clubes - Painel de Gestão</title>
+  <link rel="stylesheet" href="style.css?v=20260224-2">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='75' font-size='75'>⚽</text></svg>">
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 </head>
 <body>
-  <div id="login-container" class="login-container" style="display: flex;">
+  <div id="login-container" class="login-container" style="display: none;">
     <div class="login-box">
       <div class="login-header">
         <div>⚽</div>
-        <h1>Família 13</h1>
-        <p>Gestão de Time</p>
+        <h1>Gestão de Clubes</h1>
+        <p>Painel de Gestão de Clube Amador</p>
       </div>
-      <form onsubmit="AuthModule.login(event)">
+
+      <!-- FORMULÁRIO DE LOGIN -->
+      <form id="form-login" onsubmit="AuthModule.login(event)" style="display: block;">
         <div class="form-group" style="margin-bottom: 20px;">
-          <label for="login-user">Login</label>
-          <input type="text" id="login-user" placeholder="Digite seu login" required autofocus>
+          <label for="login-email">Email</label>
+          <input type="email" id="login-email" placeholder="Digite seu email" required autofocus>
         </div>
         <div class="form-group">
           <label for="login-pass">Senha</label>
@@ -32,11 +38,65 @@
         </div>
         <button type="submit" class="btn-login">Entrar</button>
         <div id="login-error" style="color: var(--danger-color); text-align: center; margin-top: 16px; font-weight: 600; font-size: 14px; display: none;"></div>
+        <div style="text-align: center; margin-top: 20px; font-size: 13px;">
+          <a href="#" onclick="AuthModule.showForm('reset'); return false;" style="color: var(--text-secondary); text-decoration: none;">Esqueci a senha</a>
+        </div>
+      </form>
+
+      <!-- FORMULÁRIO DE REGISTRO -->
+      <form id="form-register" onsubmit="AuthModule.register(event)" style="display: none;">
+        <div class="form-group" style="margin-bottom: 16px;">
+          <label for="register-nome">Nome Completo</label>
+          <input type="text" id="register-nome" placeholder="Seu nome" required>
+        </div>
+        <div class="form-group" style="margin-bottom: 16px;">
+          <label for="register-email">Email</label>
+          <input type="email" id="register-email" placeholder="seu@email.com" required>
+        </div>
+        <div class="form-group" style="margin-bottom: 16px;">
+          <label for="register-pass">Senha</label>
+          <input type="password" id="register-pass" placeholder="Mínimo 6 caracteres" required minlength="6">
+        </div>
+        <div class="form-group" style="margin-bottom: 16px;">
+          <label for="register-pass-confirm">Confirmar Senha</label>
+          <input type="password" id="register-pass-confirm" placeholder="Digite a senha novamente" required minlength="6">
+        </div>
+        <button type="submit" class="btn-login">Criar Conta</button>
+        <div id="register-error" style="color: var(--danger-color); text-align: center; margin-top: 16px; font-weight: 600; font-size: 14px; display: none;"></div>
+        <div id="register-success" style="color: var(--success-color); text-align: center; margin-top: 16px; font-weight: 600; font-size: 14px; display: none;"></div>
+        <div style="text-align: center; margin-top: 20px; font-size: 13px;">
+          <a href="#" onclick="AuthModule.showForm('login'); return false;" style="color: var(--primary-color); text-decoration: none; font-weight: 600;">← Voltar ao login</a>
+        </div>
+      </form>
+
+      <!-- FORMULÁRIO DE RECUPERAÇÃO DE SENHA -->
+      <form id="form-reset" onsubmit="AuthModule.resetPassword(event)" style="display: none;">
+        <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 16px; line-height: 1.5;">
+          Digite seu email e a nova senha desejada.
+        </p>
+        <div class="form-group" style="margin-bottom: 16px;">
+          <label for="reset-email">Email</label>
+          <input type="email" id="reset-email" placeholder="seu@email.com" required>
+        </div>
+        <div class="form-group" style="margin-bottom: 16px;">
+          <label for="reset-pass-nova">Nova Senha</label>
+          <input type="password" id="reset-pass-nova" placeholder="Mínimo 6 caracteres" required minlength="6">
+        </div>
+        <div class="form-group" style="margin-bottom: 16px;">
+          <label for="reset-pass-confirm">Confirmar Senha</label>
+          <input type="password" id="reset-pass-confirm" placeholder="Digite a senha novamente" required minlength="6">
+        </div>
+        <button type="submit" class="btn-login">Alterar Senha</button>
+        <div id="reset-error" style="color: var(--danger-color); text-align: center; margin-top: 16px; font-weight: 600; font-size: 14px; display: none;"></div>
+        <div id="reset-success" style="color: var(--success-color); text-align: center; margin-top: 16px; font-weight: 600; font-size: 14px; display: none;"></div>
+        <div style="text-align: center; margin-top: 20px; font-size: 13px;">
+          <a href="#" onclick="AuthModule.showForm('login'); return false;" style="color: var(--primary-color); text-decoration: none; font-weight: 600;">← Voltar ao login</a>
+        </div>
       </form>
     </div>
   </div>
 
-  <div id="app-container" class="app-container" style="display: none;">
+  <div id="app-container" class="app-container" style="display: none; opacity: 0; transition: opacity 0.3s ease-in;">
     <button class="hamburger-menu" id="hamburger-btn" onclick="toggleSidebar()" aria-label="Menu">
       <span></span>
       <span></span>
@@ -55,7 +115,9 @@
       <button title="Registrar Jogos" onclick="loadModule('jogos'); closeSidebarOnMobile()" id="btn-jogos">⚽ Jogos</button>
       <button title="Estatísticas" onclick="loadModule('estatisticas'); closeSidebarOnMobile()" id="btn-stats">📊 Estatísticas</button>
       <button title="Controle Financeiro" onclick="loadModule('financeiro'); closeSidebarOnMobile()" id="btn-financeiro">💰 Financeiro</button>
+      <button title="Gerenciar Usuários" onclick="loadModule('usuarios'); closeSidebarOnMobile()" id="btn-usuarios">🔐 Gerenciar Usuários</button>
       <button title="Logs do Sistema" onclick="loadModule('logs'); closeSidebarOnMobile()" id="btn-logs">📋 Logs</button>
+      <button title="Gestão de Clubes" onclick="loadModule('gestao-clubes'); closeSidebarOnMobile()" id="btn-gestao-clubes">🏢 Gestão de Clubes</button>
       <button title="Sair" onclick="AuthModule.logout(); closeSidebarOnMobile()" style="margin-top: auto; border-top: 2px solid var(--border-color); padding-top: 12px; color: var(--danger-color);">🚪 Sair</button>
     </aside>
     <main id="main-content">
@@ -63,6 +125,22 @@
       <p>Carregando...</p>
     </main>
   </div>
-  <script src="app.js?v=20260106-01"></script>
+  <!-- MONITORING CONFIG: Sentry, Analytics, Firebase -->
+  <script src="monitoring-config-simple.js?v=20260223-091500"></script>
+  
+  <!-- SENTRY: Error Monitoring & Tracking -->
+  <script src="https://browser.sentry-cdn.com/7.80.0/bundle.min.js"></script>
+  
+  <!-- GOOGLE ANALYTICS: User Behavior & Events -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+  
+  <!-- FIREBASE -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-functions.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-analytics.js"></script>
+  
+  <script src="app.js?v=20260224-180000"></script>
 </body>
 </html>

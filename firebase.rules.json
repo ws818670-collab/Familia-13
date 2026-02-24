@@ -1,0 +1,118 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    
+    "clubs": {
+      ".read": "auth != null",
+      ".write": false,
+      "$clubId": {
+        ".read": "auth != null && (auth.token.admin === true || root.child('clubs').child($clubId).child('members').child(auth.uid).exists())",
+        ".write": "auth != null && auth.token.admin === true",
+        
+        "info": {
+          ".read": "auth != null && (auth.token.admin === true || root.child('clubs').child($clubId).child('members').child(auth.uid).exists())",
+          ".write": "auth != null && (auth.token.admin === true || root.child('clubs').child($clubId).child('members').child(auth.uid).child('role').val() === 'admin')",
+          ".validate": "newData.hasChildren(['name', 'createdAt', 'createdBy'])"
+        },
+        
+        "members": {
+          ".read": "auth != null && (auth.token.admin === true || root.child('clubs').child($clubId).child('members').child(auth.uid).exists())",
+          ".write": "auth != null && auth.token.admin === true",
+          "$uid": {
+            ".read": "auth != null && (auth.uid === $uid || auth.token.admin === true || root.child('clubs').child($clubId).child('members').child(auth.uid).child('role').val() === 'admin')",
+            ".write": "auth != null && (auth.token.admin === true || root.child('clubs').child($clubId).child('members').child(auth.uid).child('role').val() === 'admin')",
+            ".validate": "newData.hasChildren(['login', 'email', 'nome', 'role', 'status', 'joinedAt'])",
+            "firstLoginRequired": {
+              ".write": "auth != null && (auth.token.admin === true || auth.uid === $uid)"
+            }
+          }
+        },
+        
+        "jogadores": {
+          ".read": "auth != null && (auth.token.admin === true || (root.child('clubs').child($clubId).child('members').child(auth.uid).exists() && root.child('clubs').child($clubId).child('members').child(auth.uid).child('status').val() === 'approved'))",
+          ".write": "auth != null && (auth.token.admin === true || (root.child('clubs').child($clubId).child('members').child(auth.uid).child('status').val() === 'approved' && (root.child('clubs').child($clubId).child('members').child(auth.uid).child('role').val() === 'diretor' || root.child('clubs').child($clubId).child('members').child(auth.uid).child('role').val() === 'admin')))",
+          ".indexOn": ["id", "nome"],
+          "$jogadorId": {
+            ".validate": "newData.hasChildren(['id', 'nome', 'posicao'])"
+          }
+        },
+        
+        "jogos": {
+          ".read": "auth != null && (auth.token.admin === true || root.child('clubs').child($clubId).child('members').child(auth.uid).child('status').val() === 'approved')",
+          ".write": "auth != null && (auth.token.admin === true || (root.child('clubs').child($clubId).child('members').child(auth.uid).child('status').val() === 'approved' && (root.child('clubs').child($clubId).child('members').child(auth.uid).child('role').val() === 'diretor' || root.child('clubs').child($clubId).child('members').child(auth.uid).child('role').val() === 'admin')))",
+          ".indexOn": ["id", "data"],
+          "$jogoId": {
+            ".validate": "newData.hasChildren(['id', 'data', 'adversario'])"
+          }
+        },
+        
+        "financeiro": {
+          ".read": "auth != null && (auth.token.admin === true || (root.child('clubs').child($clubId).child('members').child(auth.uid).exists() && root.child('clubs').child($clubId).child('members').child(auth.uid).child('status').val() === 'approved'))",
+          ".write": "auth != null && (auth.token.admin === true || (root.child('clubs').child($clubId).child('members').child(auth.uid).child('status').val() === 'approved' && root.child('clubs').child($clubId).child('members').child(auth.uid).child('role').val() === 'admin'))",
+          ".indexOn": ["id", "tipo"]
+        },
+        
+        "categorias": {
+          ".read": "auth != null && (auth.token.admin === true || (root.child('clubs').child($clubId).child('members').child(auth.uid).exists() && root.child('clubs').child($clubId).child('members').child(auth.uid).child('status').val() === 'approved'))",
+          ".write": "auth != null && (auth.token.admin === true || (root.child('clubs').child($clubId).child('members').child(auth.uid).child('status').val() === 'approved' && (root.child('clubs').child($clubId).child('members').child(auth.uid).child('role').val() === 'diretor' || root.child('clubs').child($clubId).child('members').child(auth.uid).child('role').val() === 'admin')))",
+          ".indexOn": ["tipo"]
+        },
+        
+        "categorias_financeiras": {
+          ".read": "auth != null && (auth.token.admin === true || (root.child('clubs').child($clubId).child('members').child(auth.uid).child('status').val() === 'approved' && (root.child('clubs').child($clubId).child('members').child(auth.uid).child('role').val() === 'diretor' || root.child('clubs').child($clubId).child('members').child(auth.uid).child('role').val() === 'admin')))",
+          ".write": "auth != null && (auth.token.admin === true || (root.child('clubs').child($clubId).child('members').child(auth.uid).child('status').val() === 'approved' && root.child('clubs').child($clubId).child('members').child(auth.uid).child('role').val() === 'admin'))",
+          ".indexOn": ["tipo"],
+          "entrada": {
+            "$catId": {
+              ".validate": "newData.hasChildren(['id', 'nome', 'tipo']) && newData.child('tipo').val() === 'entrada'"
+            }
+          },
+          "saida": {
+            "$catId": {
+              ".validate": "newData.hasChildren(['id', 'nome', 'tipo']) && newData.child('tipo').val() === 'saida'"
+            }
+          }
+        },
+        
+        "logs": {
+          ".read": "auth != null && (auth.token.admin === true || (root.child('clubs').child($clubId).child('members').child(auth.uid).child('status').val() === 'approved' && (root.child('clubs').child($clubId).child('members').child(auth.uid).child('role').val() === 'admin' || root.child('clubs').child($clubId).child('members').child(auth.uid).child('role').val() === 'diretor')))",
+          ".write": "auth != null && (auth.token.admin === true || (root.child('clubs').child($clubId).child('members').child(auth.uid).child('status').val() === 'approved' && (root.child('clubs').child($clubId).child('members').child(auth.uid).child('role').val() === 'admin' || root.child('clubs').child($clubId).child('members').child(auth.uid).child('role').val() === 'diretor')))",
+          ".indexOn": ["timestamp", "usuario", "acao"],
+          "$logId": {
+            ".read": true,
+            ".write": "auth != null && (auth.token.admin === true || (newData.val() == null && (now - data.child('timestamp').val() > 7776000000)))",
+            ".validate": "newData.hasChildren(['id', 'usuario', 'role', 'acao', 'descricao', 'timestamp'])"
+          }
+        },
+        
+        "cache": {
+          ".read": "auth != null && (auth.token.admin === true || (root.child('clubs').child($clubId).child('members').child(auth.uid).exists() && root.child('clubs').child($clubId).child('members').child(auth.uid).child('status').val() === 'approved'))",
+          ".write": "auth != null && (auth.token.admin === true || (root.child('clubs').child($clubId).child('members').child(auth.uid).child('status').val() === 'approved'))"
+        }
+      }
+    },
+    
+    "userClubs": {
+      ".read": false,
+      ".write": false,
+      "$uid": {
+        ".read": "auth != null && (auth.uid === $uid || auth.token.admin === true)",
+        ".write": "auth != null && (auth.uid === $uid || auth.token.admin === true)",
+        "$clubId": {
+          ".validate": "newData.hasChildren(['clubId', 'clubName', 'joinedAt'])"
+        }
+      }
+    },
+
+    "pendingUsers": {
+      ".read": "auth != null && auth.token.admin === true",
+      ".write": "auth != null",
+      "$uid": {
+        ".read": "auth != null && (auth.uid === $uid || auth.token.admin === true)",
+        ".write": "auth != null && (auth.uid === $uid || auth.token.admin === true)",
+        ".validate": "!newData.exists() || (newData.hasChildren(['nome', 'email', 'status', 'createdAt']) && newData.child('status').val() === 'pending')"
+      }
+    }
+  }
+}

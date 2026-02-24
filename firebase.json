@@ -1,4 +1,12 @@
 {
+  "database": {
+    "rules": "firebase.rules.json"
+  },
+  "functions": {
+    "source": "functions",
+    "predeploy": [],
+    "runtime": "nodejs20"
+  },
   "hosting": {
     "public": ".",
     "ignore": [
