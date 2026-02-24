@@ -2,6 +2,22 @@
 
 Um aplicativo web moderno e responsivo para gerenciar todos os aspectos de um time de futebol amador.
 
+## ⚖️ Licença e Uso
+
+Este projeto é licenciado sob a **MIT License**. Você pode:
+- ✅ Usar o código livremente
+- ✅ Modificar e criar versões derivadas
+- ✅ Distribuir cópias
+- ⚠️ **Deve incluir** cópia da licença MIT
+- ⚠️ **Não há garantias** - use por sua conta e risco
+
+**Veja [LICENSE](LICENSE) para detalhes completos.**
+
+**Se você usar este código em produção, considere:**
+- ✅ Dar crédito ao autor original
+- ✅ Referenciar o repositório original
+- ✅ Manter a licença MIT intacta
+
 ## 🎯 Funcionalidades
 
 ### 👥 Jogadores
